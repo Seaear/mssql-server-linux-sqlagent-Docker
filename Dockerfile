@@ -23,6 +23,10 @@ ENV ACCEPT_EULA Y
 ENV MSSQL_PID Developer
 ENV MSSQL_COLLATION Chinese_PRC_CI_AS
 ENV MSSQL_LCID 2052
- 
+
+EXPOSE 1433
+
+VOLUME /var/opt/mssql
+
 # start sql server 
 CMD /opt/mssql/bin/sqlservr
