@@ -6,10 +6,14 @@
 # Base OS layer: Latest Ubuntu LTS
 FROM ubuntu:16.04
 
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata
+
 # Install prerequistes since it is needed to get repo config for SQL server
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -yq sudo nano curl apt-transport-https && \
+    apt-get install -yq sudo nano curl iputils-ping apt-transport-https && \
     # Get official Microsoft repository configuration
     curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     curl https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list | tee /etc/apt/sources.list.d/mssql-server.list && \
@@ -17,8 +21,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     # Install SQL Server from apt
     apt-get install -y mssql-server && \
     # Install optional packages
-    #apt-get install -y mssql-server-ha && \
-    #apt-get install -y mssql-server-fts && \
+    apt-get install -y mssql-server-ha && \
+    apt-get install -y mssql-server-fts && \
     # Cleanup the Dockerfile
     apt-get clean && \
     rm -rf /var/lib/apt/lists
@@ -30,6 +34,7 @@ ENV ACCEPT_EULA Y
 ENV MSSQL_PID Developer
 ENV MSSQL_COLLATION Chinese_PRC_CI_AS
 ENV MSSQL_LCID 2052
+ENV SA_PASSWORD Password_123
 
 EXPOSE 1433
 
